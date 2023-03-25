@@ -1,0 +1,52 @@
+def change(self, amount, coins):
+    """零钱兑换力扣518,完全背包问题，动态规划解法,version1:力扣实际运行用时为1120ms,滚动数组优化空间"""
+    dp = [0 for _ in range(amount + 1)]
+    for m in range(amount + 1):
+        if m % coins[0] == 0:
+            dp[m] = 1
+
+    for i in range(1, len(coins)):
+        for j in range(amount, coins[i] - 1, -1):  # 同一个物品可以被取无限次
+            mid = coins[i]  # 这里与0-1背包不同，要把所有能取第二个物品的情况都包含进来才行
+            while j - mid >= 0:
+                dp[j] += dp[j - mid]
+                mid += coins[i]
+
+    # dp 若amount = 5 ,coins = [1,2,5]，则理论dp数组最后应该为[1,1,2,2,3,4]
+    print(dp)
+    return dp[amount]
+
+
+def change2(self, amount, coins):
+    """零钱兑换力扣518,完全背包问题，动态规划解法，version2：针对遍历背包的顺序进行了优化，力扣实际运行用时为：116ms"""
+    dp = [0 for _ in range(amount + 1)]
+    for m in range(amount + 1):
+        if m % coins[0] == 0:
+            dp[m] = 1
+
+    for i in range(1, len(coins)):
+        for j in range(coins[i], amount + 1):  # 同一个物品可以被取无限次，这里不用再用一个内部的while循环取当前物品了
+            #直接正序遍历就行，这样每往后遍历一次就可以包含重复取当前元素的情况，因为递归公式是由左推右的，
+            #如j=2和j=3时，j=3包含了j=1和j=2时取coins[i]的情况
+            dp[j] += dp[j - coins[i]]
+
+    # dp 若amount = 5 ,coins = [1,2,5]，则理论dp数组最后应该为[1,1,2,2,3,4]
+    print(dp)
+    return dp[amount]
+
+
+"""
+完全背包阶段总结：
+与01背包的区别是每个物品能被重复选取，不再只有1个，因此初始化和遍历的时候都要考虑重复选取的情况
+
+与此同时，本题求的是组合数(即amount=5时，2，2，1与1，2，2为同一种)，故本题的遍历顺序为先遍历物品再遍历背包，
+若要求的是排列数，则遍历顺序应该为先遍历背包再遍历物品
+
+先物品再背包求出来的是组合数，原因为：
+物品的遍历总是先0后1，先1后2，然后再遍历背包，所以最后求出来的结果组合也一定是0在前1在后，2往后
+
+而先背包再遍历物品，求出来的是排列数，原因为：
+每遍历一个背包容量，物品都是先0后1，先1后2
+但是当背包容量为2时可能对应组合为12，然后当背包容量为3时对应的组合为2，然后当背包容量为4时对应的组合为1
+此时最终的方案就变成了1221了。所以求的是排列数。
+"""
