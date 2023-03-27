@@ -1,2 +1,2 @@
 # leetcode
-Set up for my leetcode practicing(hope e can help you maybe)
+Set up for my leetcode practicing(hope it can help you maybe)
