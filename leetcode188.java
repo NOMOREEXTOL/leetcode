@@ -6,10 +6,8 @@
 class Solution {
     public int maxProfit(int k, int[] prices) {
         int dp[] = new int[2 * k + 1];
-        for (int i = 1; i <= 2 * k; i++) {
-            if (i % 2 == 1) {
+        for (int i = 1; i <= 2 * k; i+=2) {
             dp[i] = -prices[0];
-            }
         }
         
         for (int j = 1 ; j < prices.length ; ++j) {
